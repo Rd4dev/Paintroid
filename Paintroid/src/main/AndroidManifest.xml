@@ -41,6 +41,9 @@
                 android:resource="@xml/filepaths"/>
         </provider>
 
+        <activity android:name=".LandingPage"
+            android:exported="true"
+            android:theme="@style/PocketPaintTheme"/>
         <activity
             android:exported="false"
             android:name=".WelcomeActivity"
