@@ -305,9 +305,13 @@ class MainActivity : AppCompatActivity(), MainView, CommandListener {
                 presenterMain.initializeFromCleanState(null, null)
             }
             savedInstanceState == null -> {
+                if(receivedIntent.getStringExtra("NEW_PROJECT") == "new_project"){
+                    presenterMain.onNewImage()
+                }else{
                 val intent = intent
                 val picturePath = intent.getStringExtra(PAINTROID_PICTURE_PATH)
                 val pictureName = intent.getStringExtra(PAINTROID_PICTURE_NAME)
+
                 presenterMain.initializeFromCleanState(picturePath, pictureName)
 
                 if (!model.isOpenedFromCatroid && presenterMain.checkForTemporaryFile() && (!isRunningEspressoTests || isTemporaryFileSavingTest)) {
@@ -320,7 +324,7 @@ class MainActivity : AppCompatActivity(), MainView, CommandListener {
                     }
                 }
                 workspace.perspective.setBitmapDimensions(layerModel.width, layerModel.height)
-            }
+            }}
             else -> {
                 val isFullscreen = savedInstanceState.getBoolean(IS_FULLSCREEN_KEY, false)
                 val isSaved = savedInstanceState.getBoolean(IS_SAVED_KEY, false)

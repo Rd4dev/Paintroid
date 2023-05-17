@@ -63,4 +63,15 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_pocket_paint_landing_page_text"
         app:layout_constraintVertical_bias="0.034" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_pocket_paint_open_new_project"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:backgroundTint="@color/pocketpaint_color_picker_yellow"
+        android:elevation="5dp"
+        android:layout_margin="15dp"
+        android:src="@drawable/ic_pocketpaint_plus_enabled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
