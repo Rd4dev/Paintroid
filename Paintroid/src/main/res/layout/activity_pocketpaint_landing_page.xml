@@ -4,6 +4,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include
+        android:id="@+id/pocketpaint_layout_landingpage_top_bar"
+        layout="@layout/pocketpaint_layout_landingpage_top_bar" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="656px"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pocketpaint_layout_landingpage_top_bar">
+
+        <ImageView
+            android:id="@+id/iv_pocket_paint_image_preview"
+            android:layout_width="match_parent"
+            android:layout_height="656px"
+            android:background="@drawable/pocketpaint_checkeredbg_repeat"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_pocket_paint_edit_circle"
+            android:layout_width="264px"
+            android:layout_height="264px"
+            android:src="@drawable/ic_pocketpaint_edit_circle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <TextView
         android:id="@+id/tv_pocket_paint_landing_page_text"
         android:layout_width="wrap_content"
