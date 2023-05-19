@@ -201,14 +201,21 @@ object FileIO {
         resolver: ContentResolver?,
         context: Context
     ): Uri {
+        Log.d("saveimage", "saveBitmapToFile: Start of save bitmap to file")
         val imageUri: Uri? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Log.d("saveimage", "saveBitmapToFile: Save bitmap if")
             val contentValues = ContentValues().apply {
                 put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
                 put(MediaStore.Images.Media.MIME_TYPE, "image/*")
                 put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
             }
+            Log.d("saveimage", "saveBitmapToFile: Save bitmap content values - $contentValues")
+            Log.d("saveimage", "saveBitmapToFile: Save bitmap resolver - $resolver")
+            Log.d("saveimage", "saveBitmapToFile: Save external content - ${MediaStore.Images.Media.EXTERNAL_CONTENT_URI}")
+            Log.d("saveimage", "saveBitmapToFile: Save resolver - ${resolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)}")
             resolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
         } else {
+            Log.d("saveimage", "saveBitmapToFile: Save bitmap else")
             if (!(PICTURES_DIRECTORY.exists() || PICTURES_DIRECTORY.mkdirs())) {
                 throw IOException("Can not create media directory.")
             }
@@ -217,6 +224,7 @@ object FileIO {
 
         val cachedImageUri =
             saveBitmapToCache(bitmap, context as MainActivity, UUID.randomUUID().toString())
+        Log.d("saveimage", "saveBitmapToFile: cachedImageUri - $cachedImageUri")
         var cachedFile: File? = null
         cachedImageUri?.let {
             cachedFile = File(MainActivityPresenter.getPathFromUri(context, it))
@@ -260,6 +268,7 @@ object FileIO {
         } catch (e: IOException) {
             Log.e("Can not write", "Can not write png to stream.", e)
         }
+        Log.d("saveimage", "saveBitmapToCache: bitmap cache uri - $uri")
         return uri
     }
 

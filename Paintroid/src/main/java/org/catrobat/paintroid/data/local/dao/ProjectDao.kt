@@ -16,4 +16,7 @@ interface ProjectDao {
 
     @Query("DELETE FROM Project WHERE id= :id")
     fun deleteProject(id: Int)
+
+    @Query("DELETE FROM Project")
+    fun deleteAllProjects()
 }

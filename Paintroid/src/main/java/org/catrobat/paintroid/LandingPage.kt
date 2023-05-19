@@ -12,8 +12,8 @@ import org.catrobat.paintroid.data.local.database.ProjectDatabase
 import org.catrobat.paintroid.data.local.database.ProjectDatabaseProvider
 import org.catrobat.paintroid.model.Project
 
+lateinit var projectDB: ProjectDatabase
 class LandingPage: AppCompatActivity() {
-    lateinit var projectDB: ProjectDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +26,7 @@ class LandingPage: AppCompatActivity() {
         }*/
 
         projectDB = ProjectDatabaseProvider.getDatabase(applicationContext)
-        projectDB.dao.insertProject(Project("singletonTestName", "paintroid/testPath1", "18/05/2023", "04/05/2023", "360X420", "jpeg", 70, "paintroid/imagePreviewTestPath1"))
+//        projectDB.dao.insertProject(Project("singletonTestName", "paintroid/testPath1", "18/05/2023", "04/05/2023", "360X420", "jpeg", 70, "paintroid/imagePreviewTestPath1"))
 
 //        db.dao.insertProject(Project("testName", "paintroid/testPath", "18/05/2023", "03/05/2023", "1920X1080", "png", 50, "paintroid/imagePreviewTestPath"))
 

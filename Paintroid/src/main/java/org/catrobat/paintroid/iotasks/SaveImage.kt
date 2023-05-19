@@ -31,8 +31,11 @@ import kotlinx.coroutines.withContext
 import org.catrobat.paintroid.FileIO
 import org.catrobat.paintroid.command.serialization.CommandSerializer
 import org.catrobat.paintroid.contract.LayerContracts
+import org.catrobat.paintroid.model.Project
+import org.catrobat.paintroid.projectDB
 import java.io.IOException
 import java.lang.ref.WeakReference
+import java.util.*
 
 class SaveImage(
     activity: SaveImageCallback,
@@ -55,11 +58,19 @@ class SaveImage(
         callback: SaveImageCallback,
         bitmap: Bitmap?
     ): Uri? {
+        Log.d("saveimage", "getImageUri: in getImageUri")
         val filename = FileIO.defaultFileName
         return if (uri == null) {
+            Log.d("saveimage", "getImageUri: if")
+            Log.d("saveimage", "getImageUri: filename - $filename")
+            Log.d("saveimage", "getImageUri: callback content resolver - ${callback.contentResolver}")
+            Log.d("saveimage", "getImageUri: context - $context")
+            Log.d("saveimage", "getImageUri: save - ${FileIO.saveBitmapToFile(filename, bitmap, callback.contentResolver, context)}")
             val imageUri = FileIO.saveBitmapToFile(filename, bitmap, callback.contentResolver, context)
+            Log.d("saveimage", "getImageUri: if imageUri - $imageUri")
             imageUri
         } else {
+            Log.d("saveimage", "getImageUri: else")
             uri?.let { FileIO.saveBitmapToUri(it, bitmap, context) }
         }
     }
@@ -117,6 +128,9 @@ class SaveImage(
                 Log.d("saveimage", "execute: bitmap - $bitmap")
                 val filename = FileIO.defaultFileName
                 Log.d("saveimage", "execute: filename - $filename")
+
+                val dbp = projectDB.dao.getProjects()
+
                 currentUri = if (FileIO.fileType == FileIO.FileType.ORA) {
                     val layers = layerModel.layers
                     if (uri != null && filename.endsWith(FileIO.FileType.ORA.toExtension())) {
@@ -129,17 +143,33 @@ class SaveImage(
                     }
                 } else if (FileIO.fileType == FileIO.FileType.CATROBAT) {
                     Log.d("saveimage", "execute: catrobat")
+//                    Log.d("saveimage", "execute: projects in DB - $dbp")
+
                     if (uri != null) {
                         uri?.let {
                             commandSerializer.overWriteFile(filename, it, callback.contentResolver)
                         }
                     } else {
+                        /*projectDB.dao.insertProject(Project("saveImageTest", uri.toString(), Calendar.getInstance().time.toString(), Calendar.getInstance().time.toString(), "", FileIO.fileType.toString(), 0, getImageUri(callback, bitmap).toString()))
+                        Log.d("saveimage", "execute: projects in DB - $dbp")*/
                         commandSerializer.writeToFile(filename)
                     }
                 } else {
                     Log.d("saveimage", "execute: else")
+                    Log.d("saveimage", "execute: bitmap - $bitmap")
+                    Log.d("saveimage", "execute: callback - $callback")
+                    Log.d("saveimage", "execute: getImageUri - ${getImageUri(callback, bitmap)}")
                     getImageUri(callback, bitmap)
                 }
+
+//                projectDB.dao.insertProject(Project("saveImageTest", uri.toString(), Calendar.getInstance().time.toString(), Calendar.getInstance().time.toString(), "", FileIO.fileType.toString(), 0, getImageUri(callback, bitmap).toString()))
+                Log.d("saveimage", "execute: bitmap - $bitmap")
+                Log.d("saveimage", "execute: callback - $callback")
+                getImageUri(callback, bitmap)
+                Log.d("saveimage", "execute: getImageUri - ${getImageUri(callback, bitmap)}")
+                projectDB.dao.insertProject(Project("paintroidName", filename, Calendar.getInstance().time.toString(), Calendar.getInstance().time.toString(), "", FileIO.fileType.toString(), 0, "paintroid/imagePreviewTestPath"))
+                Log.d("saveimage", "execute: here!")
+
                 idlingResource.decrement()
             } catch (e: Exception) {
                 idlingResource.decrement()
