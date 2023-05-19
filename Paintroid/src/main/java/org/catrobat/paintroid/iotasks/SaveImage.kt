@@ -61,16 +61,16 @@ class SaveImage(
         Log.d("saveimage", "getImageUri: in getImageUri")
         val filename = FileIO.defaultFileName
         return if (uri == null) {
-            Log.d("saveimage", "getImageUri: if")
-            Log.d("saveimage", "getImageUri: filename - $filename")
-            Log.d("saveimage", "getImageUri: callback content resolver - ${callback.contentResolver}")
-            Log.d("saveimage", "getImageUri: context - $context")
-            Log.d("saveimage", "getImageUri: save - ${FileIO.saveBitmapToFile(filename, bitmap, callback.contentResolver, context)}")
+//            Log.d("saveimage", "getImageUri: if")
+//            Log.d("saveimage", "getImageUri: filename - $filename")
+//            Log.d("saveimage", "getImageUri: callback content resolver - ${callback.contentResolver}")
+//            Log.d("saveimage", "getImageUri: context - $context")
+//            Log.d("saveimage", "getImageUri: save - ${FileIO.saveBitmapToFile(filename, bitmap, callback.contentResolver, context)}")
             val imageUri = FileIO.saveBitmapToFile(filename, bitmap, callback.contentResolver, context)
-            Log.d("saveimage", "getImageUri: if imageUri - $imageUri")
+//            Log.d("saveimage", "getImageUri: if imageUri - $imageUri")
             imageUri
         } else {
-            Log.d("saveimage", "getImageUri: else")
+//            Log.d("saveimage", "getImageUri: else")
             uri?.let { FileIO.saveBitmapToUri(it, bitmap, context) }
         }
     }
@@ -155,19 +155,19 @@ class SaveImage(
                         commandSerializer.writeToFile(filename)
                     }
                 } else {
-                    Log.d("saveimage", "execute: else")
-                    Log.d("saveimage", "execute: bitmap - $bitmap")
-                    Log.d("saveimage", "execute: callback - $callback")
-                    Log.d("saveimage", "execute: getImageUri - ${getImageUri(callback, bitmap)}")
+//                    Log.d("saveimage", "execute: else")
+//                    Log.d("saveimage", "execute: bitmap - $bitmap")
+//                    Log.d("saveimage", "execute: callback - $callback")
+//                    Log.d("saveimage", "execute: getImageUri - ${getImageUri(callback, bitmap)}")
                     getImageUri(callback, bitmap)
                 }
 
 //                projectDB.dao.insertProject(Project("saveImageTest", uri.toString(), Calendar.getInstance().time.toString(), Calendar.getInstance().time.toString(), "", FileIO.fileType.toString(), 0, getImageUri(callback, bitmap).toString()))
-                Log.d("saveimage", "execute: bitmap - $bitmap")
-                Log.d("saveimage", "execute: callback - $callback")
-                getImageUri(callback, bitmap)
-                Log.d("saveimage", "execute: getImageUri - ${getImageUri(callback, bitmap)}")
-                projectDB.dao.insertProject(Project("paintroidName", filename, Calendar.getInstance().time.toString(), Calendar.getInstance().time.toString(), "", FileIO.fileType.toString(), 0, "paintroid/imagePreviewTestPath"))
+//                Log.d("saveimage", "execute: bitmap - $bitmap")
+//                Log.d("saveimage", "execute: callback - $callback")
+//                getImageUri(callback, bitmap)
+//                Log.d("saveimage", "execute: getImageUri - ${getImageUri(callback, bitmap)}")
+                projectDB.dao.insertProject(Project(filename, uri.toString(), Calendar.getInstance().time.toString(), Calendar.getInstance().time.toString(), "", FileIO.fileType.toString(), 0, "paintroid/imagePreviewTestPath"))
                 Log.d("saveimage", "execute: here!")
 
                 idlingResource.decrement()
