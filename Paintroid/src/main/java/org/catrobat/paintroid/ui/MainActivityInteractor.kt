@@ -20,6 +20,7 @@ package org.catrobat.paintroid.ui
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.test.espresso.idling.CountingIdlingResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -59,6 +60,7 @@ class MainActivityInteractor(private val idlingResource: CountingIdlingResource)
         uri: Uri?,
         context: Context
     ) {
+        Log.d("saveimage", "saveImage: Inside Save Image")
         SaveImage(callback, requestCode, layerModel, commandSerializer, uri, false, context, scopeIO, idlingResource).execute()
     }
 

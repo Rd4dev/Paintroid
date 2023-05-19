@@ -114,7 +114,9 @@ class SaveImage(
             try {
                 idlingResource.increment()
                 val bitmap = layerModel.getBitmapOfAllLayers()
+                Log.d("saveimage", "execute: bitmap - $bitmap")
                 val filename = FileIO.defaultFileName
+                Log.d("saveimage", "execute: filename - $filename")
                 currentUri = if (FileIO.fileType == FileIO.FileType.ORA) {
                     val layers = layerModel.layers
                     if (uri != null && filename.endsWith(FileIO.FileType.ORA.toExtension())) {
@@ -126,6 +128,7 @@ class SaveImage(
                         imageUri
                     }
                 } else if (FileIO.fileType == FileIO.FileType.CATROBAT) {
+                    Log.d("saveimage", "execute: catrobat")
                     if (uri != null) {
                         uri?.let {
                             commandSerializer.overWriteFile(filename, it, callback.contentResolver)
@@ -134,6 +137,7 @@ class SaveImage(
                         commandSerializer.writeToFile(filename)
                     }
                 } else {
+                    Log.d("saveimage", "execute: else")
                     getImageUri(callback, bitmap)
                 }
                 idlingResource.decrement()
