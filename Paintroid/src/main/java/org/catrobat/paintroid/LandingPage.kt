@@ -4,16 +4,23 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.catrobat.paintroid.adapter.ProjectAdapter
 import org.catrobat.paintroid.data.local.database.ProjectDatabase
 import org.catrobat.paintroid.data.local.database.ProjectDatabaseProvider
 import org.catrobat.paintroid.model.Project
 
 lateinit var projectDB: ProjectDatabase
 class LandingPage: AppCompatActivity() {
+    private lateinit var projectsRecyclerView: RecyclerView
+    private lateinit var projectsList: ArrayList<Project>
+    private lateinit var projectAdapter: ProjectAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +37,8 @@ class LandingPage: AppCompatActivity() {
 
 //        db.dao.insertProject(Project("testName", "paintroid/testPath", "18/05/2023", "03/05/2023", "1920X1080", "png", 50, "paintroid/imagePreviewTestPath"))
 
+        init()
+
         val landingPageToMainActivityBtn = findViewById<Button>(R.id.btn_pocket_paint_landing_page_btn)
         landingPageToMainActivityBtn.setOnClickListener {
             val mainActivityIntent = Intent(this, MainActivity::class.java)
@@ -44,5 +53,24 @@ class LandingPage: AppCompatActivity() {
             newProjectIntent.putExtra("NEW_PROJECT", "new_project")
             startActivity(newProjectIntent)
         }
+
+        val previewImage = findViewById<ImageView>(R.id.iv_pocket_paint_image_preview)
+        previewImage.setOnClickListener {
+            val mainActivityIntent = Intent(this, MainActivity::class.java)
+            startActivity(mainActivityIntent)
+        }
+    }
+
+    private fun init() {
+        projectsRecyclerView = findViewById(R.id.rv_pocket_paint_projects_list)
+        projectsRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        projectsList = ArrayList()
+        projectDB.dao.getProjects().forEach {
+            projectsList.add(it)
+        }
+
+        projectAdapter = ProjectAdapter(projectsList)
+        projectsRecyclerView.adapter = projectAdapter
     }
 }
