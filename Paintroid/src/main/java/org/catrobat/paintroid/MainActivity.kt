@@ -307,6 +307,8 @@ class MainActivity : AppCompatActivity(), MainView, CommandListener {
             savedInstanceState == null -> {
                 if(receivedIntent.getStringExtra("NEW_PROJECT") == "new_project"){
                     presenterMain.onNewImage()
+                }else if(receivedIntent.getStringExtra("LOAD_IMAGE") == "load_image"){
+                    presenterMain.replaceImageClicked()
                 }else{
                 val intent = intent
                 val picturePath = intent.getStringExtra(PAINTROID_PICTURE_PATH)

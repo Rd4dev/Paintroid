@@ -54,6 +54,14 @@ class LandingPage: AppCompatActivity() {
             startActivity(newProjectIntent)
         }
 
+        val landingPageBtnLoadImage = findViewById<FloatingActionButton>(R.id.fab_pocket_paint_load_project)
+        landingPageBtnLoadImage.setOnClickListener{
+            Toast.makeText(this, "Load Image", Toast.LENGTH_SHORT).show()
+            val loadImageIntent = Intent(this, MainActivity::class.java)
+            loadImageIntent.putExtra("LOAD_IMAGE", "load_image")
+            startActivity(loadImageIntent)
+        }
+
         val previewImage = findViewById<ImageView>(R.id.iv_pocket_paint_image_preview)
         previewImage.setOnClickListener {
             val mainActivityIntent = Intent(this, MainActivity::class.java)
