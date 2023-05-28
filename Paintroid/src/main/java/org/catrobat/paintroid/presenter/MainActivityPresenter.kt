@@ -19,6 +19,7 @@
 package org.catrobat.paintroid.presenter
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.ContentUris
@@ -53,31 +54,12 @@ import org.catrobat.paintroid.colorpicker.ColorHistory
 import org.catrobat.paintroid.command.CommandFactory
 import org.catrobat.paintroid.command.CommandManager
 import org.catrobat.paintroid.command.serialization.CommandSerializer
-import org.catrobat.paintroid.common.CREATE_FILE_DEFAULT
-import org.catrobat.paintroid.common.LOAD_IMAGE_CATROID
-import org.catrobat.paintroid.common.LOAD_IMAGE_DEFAULT
-import org.catrobat.paintroid.common.LOAD_IMAGE_IMPORT_PNG
+import org.catrobat.paintroid.common.*
 import org.catrobat.paintroid.common.MainActivityConstants.ActivityRequestCode
 import org.catrobat.paintroid.common.MainActivityConstants.CreateFileRequestCode
 import org.catrobat.paintroid.common.MainActivityConstants.LoadImageRequestCode
 import org.catrobat.paintroid.common.MainActivityConstants.PermissionRequestCode
 import org.catrobat.paintroid.common.MainActivityConstants.SaveImageRequestCode
-import org.catrobat.paintroid.common.PERMISSION_EXTERNAL_STORAGE_SAVE
-import org.catrobat.paintroid.common.PERMISSION_EXTERNAL_STORAGE_SAVE_CONFIRMED_FINISH
-import org.catrobat.paintroid.common.PERMISSION_EXTERNAL_STORAGE_SAVE_CONFIRMED_LOAD_NEW
-import org.catrobat.paintroid.common.PERMISSION_EXTERNAL_STORAGE_SAVE_CONFIRMED_NEW_EMPTY
-import org.catrobat.paintroid.common.PERMISSION_EXTERNAL_STORAGE_SAVE_COPY
-import org.catrobat.paintroid.common.PERMISSION_REQUEST_CODE_IMPORT_PICTURE
-import org.catrobat.paintroid.common.PERMISSION_REQUEST_CODE_REPLACE_PICTURE
-import org.catrobat.paintroid.common.REQUEST_CODE_IMPORT_PNG
-import org.catrobat.paintroid.common.REQUEST_CODE_INTRO
-import org.catrobat.paintroid.common.REQUEST_CODE_LOAD_PICTURE
-import org.catrobat.paintroid.common.RESULT_INTRO_MW_NOT_SUPPORTED
-import org.catrobat.paintroid.common.SAVE_IMAGE_DEFAULT
-import org.catrobat.paintroid.common.SAVE_IMAGE_FINISH
-import org.catrobat.paintroid.common.SAVE_IMAGE_LOAD_NEW
-import org.catrobat.paintroid.common.SAVE_IMAGE_NEW_EMPTY
-import org.catrobat.paintroid.common.TEMP_PICTURE_NAME
 import org.catrobat.paintroid.contract.MainActivityContracts
 import org.catrobat.paintroid.contract.MainActivityContracts.Interactor
 import org.catrobat.paintroid.contract.MainActivityContracts.MainView
@@ -240,6 +222,14 @@ open class MainActivityPresenter(
         )
     }
 
+    override fun saveProjectClicked() {
+        navigator.showSaveImageInformationDialogWhenStandalone(
+            PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT,
+            imageNumber,
+            false
+        )
+    }
+
     override fun shareImageClicked() {
         checkIfClippingToolNeedsAdjustment()
         view.refreshDrawingSurface()
@@ -361,6 +351,7 @@ open class MainActivityPresenter(
                 PERMISSION_EXTERNAL_STORAGE_SAVE_CONFIRMED_FINISH,
                 PERMISSION_EXTERNAL_STORAGE_SAVE_COPY,
                 PERMISSION_EXTERNAL_STORAGE_SAVE -> checkForDefaultFilename()
+                PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT -> checkForDefaultFilename()
             }
         } else {
             if (requestCode == PERMISSION_REQUEST_CODE_REPLACE_PICTURE) {
@@ -504,6 +495,12 @@ open class MainActivityPresenter(
                         )
                         checkForDefaultFilename()
                     }
+                    PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT -> {
+                        saveProjectConfirmClicked(
+                            SAVE_PROJECT_DEFAULT,
+                            FileIO.storeImageUri
+                        )
+                    }
                     PERMISSION_EXTERNAL_STORAGE_SAVE_COPY -> {
                         saveCopyConfirmClicked(
                             SAVE_IMAGE_DEFAULT,
@@ -560,6 +557,12 @@ open class MainActivityPresenter(
         checkIfClippingToolNeedsAdjustment()
         view.refreshDrawingSurface()
         interactor.saveImage(this, requestCode, workspace.layerModel, commandSerializer, uri, context)
+    }
+
+    override fun saveProjectConfirmClicked(requestCode: Int, uri: Uri?) {
+        checkIfClippingToolNeedsAdjustment()
+        view.refreshDrawingSurface()
+        interactor.saveProject(this, requestCode, workspace.layerModel, commandSerializer, uri, context)
     }
 
     override fun saveCopyConfirmClicked(requestCode: Int, uri: Uri?) {
@@ -997,6 +1000,8 @@ open class MainActivityPresenter(
             SAVE_IMAGE_NEW_EMPTY -> onNewImage()
             SAVE_IMAGE_DEFAULT -> {
             }
+            SAVE_PROJECT_DEFAULT -> {
+            }
             SAVE_IMAGE_FINISH -> {
                 if (model.isOpenedFromCatroid) {
                     navigator.returnToPocketCode(uri.path)
@@ -1044,6 +1049,7 @@ open class MainActivityPresenter(
         }
     }
 
+    @SuppressLint("Range")
     private fun getFileName(uri: Uri): String? {
         var result: String? = null
         if (uri.scheme == "content") {

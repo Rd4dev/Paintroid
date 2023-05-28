@@ -22,15 +22,13 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
+import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
-import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageButton
@@ -42,11 +40,12 @@ import org.catrobat.paintroid.FileIO.FileType.JPG
 import org.catrobat.paintroid.FileIO.FileType.CATROBAT
 import org.catrobat.paintroid.FileIO.FileType.ORA
 import org.catrobat.paintroid.R
+import org.catrobat.paintroid.common.PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT
 import java.util.Locale
 
 private const val STANDARD_FILE_NAME = "image"
 private const val SET_NAME = "setName"
-private const val PERMISSION = "permission"
+private var PERMISSION = "permission"
 private const val IS_EXPORT = "isExport"
 
 class SaveInformationDialog :
@@ -70,7 +69,12 @@ class SaveInformationDialog :
             isStandard: Boolean,
             isExport: Boolean
         ): SaveInformationDialog {
-            if (isStandard) {
+            PERMISSION = permissionCode.toString()
+            if(PERMISSION == PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT.toString()){
+                FileIO.filename = STANDARD_FILE_NAME
+                FileIO.compressFormat = Bitmap.CompressFormat.PNG
+                FileIO.fileType = CATROBAT
+            }else if (isStandard) {
                 FileIO.filename = STANDARD_FILE_NAME
                 FileIO.compressFormat = Bitmap.CompressFormat.PNG
                 FileIO.fileType = PNG
@@ -102,6 +106,17 @@ class SaveInformationDialog :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews(view)
+        if(PERMISSION == PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT.toString()){
+            val imageFormatTitle = view.findViewById<TextView>(R.id.pocketpaint_image_format_title)
+            val imageFormatSaveInfo = view.findViewById<ImageButton>(R.id.pocketpaint_btn_save_info)
+            val imageFormatSaveDivider = view.findViewById<View>(R.id.pocketpaint_save_format_divider)
+            imageFormatTitle.visibility = View.GONE
+            imageFormatSaveInfo.visibility = View.GONE
+            imageFormatSaveDivider.visibility = View.GONE
+            spinner.visibility = View.GONE
+        }else{
+            spinner.visibility = View.VISIBLE
+        }
         setSpinnerSelection()
     }
 
@@ -109,9 +124,14 @@ class SaveInformationDialog :
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         inflater = requireActivity().layoutInflater
         val customLayout = inflater.inflate(R.layout.dialog_pocketpaint_save, null)
+        val alertDialogTitle = if(PERMISSION == PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT.toString()){
+            R.string.dialog_save_project_title
+        }else{
+            R.string.dialog_save_image_title
+        }
         onViewCreated(customLayout, savedInstanceState)
         return AlertDialog.Builder(requireContext(), R.style.PocketPaintAlertDialog)
-            .setTitle(R.string.dialog_save_image_title)
+            .setTitle(alertDialogTitle)
             .setView(customLayout)
             .setPositiveButton(R.string.save_button_text) { _, _ ->
                 FileIO.filename = imageName.text.toString()

@@ -206,6 +206,8 @@ interface MainActivityContracts {
 
         fun saveImageClicked()
 
+        fun saveProjectClicked()
+
         fun shareImageClicked()
 
         fun enterHideButtonsClicked()
@@ -253,6 +255,8 @@ interface MainActivityContracts {
         fun onBackPressed()
 
         fun saveImageConfirmClicked(requestCode: Int, uri: Uri?)
+
+        fun saveProjectConfirmClicked(requestCode: Int, uri: Uri?)
 
         fun saveCopyConfirmClicked(requestCode: Int, uri: Uri?)
 
@@ -336,6 +340,15 @@ interface MainActivityContracts {
         fun createFile(callback: CreateFileCallback, requestCode: Int, filename: String)
 
         fun saveImage(
+            callback: SaveImageCallback,
+            requestCode: Int,
+            layerModel: LayerContracts.Model,
+            commandSerializer: CommandSerializer,
+            uri: Uri?,
+            context: Context
+        )
+
+        fun saveProject(
             callback: SaveImageCallback,
             requestCode: Int,
             layerModel: LayerContracts.Model,

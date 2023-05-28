@@ -44,6 +44,7 @@ class SaveImage(
     private val commandSerializer: CommandSerializer,
     private var uri: Uri?,
     private val saveAsCopy: Boolean,
+    private val saveProject: Boolean,
     private val context: Context,
     private val scopeIO: CoroutineScope,
     private val idlingResource: CountingIdlingResource
@@ -131,7 +132,19 @@ class SaveImage(
 
                 val dbp = projectDB.dao.getProjects()
 
-                currentUri = if (FileIO.fileType == FileIO.FileType.ORA) {
+                currentUri =
+                    if(saveProject == true){
+                        if (uri != null) {
+                            uri?.let {
+                                commandSerializer.overWriteFile(filename, it, callback.contentResolver)
+                            }
+                        } else {
+                            /*projectDB.dao.insertProject(Project("saveImageTest", uri.toString(), Calendar.getInstance().time.toString(), Calendar.getInstance().time.toString(), "", FileIO.fileType.toString(), 0, getImageUri(callback, bitmap).toString()))
+                            Log.d("saveimage", "execute: projects in DB - $dbp")*/
+                            commandSerializer.writeToFile(filename)
+                        }
+                    }
+                    else if (FileIO.fileType == FileIO.FileType.ORA) {
                     val layers = layerModel.layers
                     if (uri != null && filename.endsWith(FileIO.FileType.ORA.toExtension())) {
                         uri?.let {
@@ -167,9 +180,21 @@ class SaveImage(
 //                Log.d("saveimage", "execute: callback - $callback")
 //                getImageUri(callback, bitmap)
 //                Log.d("saveimage", "execute: getImageUri - ${getImageUri(callback, bitmap)}")
-                projectDB.dao.insertProject(Project(filename, uri.toString(), Calendar.getInstance().time.toString(), Calendar.getInstance().time.toString(), "", FileIO.fileType.toString(), 0, "paintroid/imagePreviewTestPath"))
-                Log.d("saveimage", "execute: here!")
-
+                if(saveProject == true) {
+                    projectDB.dao.insertProject(
+                        Project(
+                            filename,
+                            uri.toString(),
+                            Calendar.getInstance().time.toString(),
+                            Calendar.getInstance().time.toString(),
+                            "",
+                            FileIO.fileType.toString(),
+                            0,
+                            "paintroid/imagePreviewTestPath"
+                        )
+                    )
+                    Log.d("saveimage", "execute: here!")
+                }
                 idlingResource.decrement()
             } catch (e: Exception) {
                 idlingResource.decrement()
