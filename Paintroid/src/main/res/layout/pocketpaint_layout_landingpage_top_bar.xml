@@ -26,7 +26,7 @@
     tools:showIn="@layout/activity_pocketpaint_landing_page">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/pocketpaint_toolbar"
+        android:id="@+id/pocketpaint_landingPage_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/PocketPaintTheme"
@@ -37,18 +37,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end">
-
-            <ImageButton
-                android:id="@+id/pocketpaint_btn_more"
-                style="?actionButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleX="0.65"
-                android:scaleY="0.65"
-                android:contentDescription="@string/button_more"
-                android:src="@drawable/ic_pocketpaint_dialog_info"
-                android:tint="@android:color/white" />
-
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 </com.google.android.material.appbar.AppBarLayout>

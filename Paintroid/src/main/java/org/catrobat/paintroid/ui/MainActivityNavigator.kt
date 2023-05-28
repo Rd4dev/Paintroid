@@ -183,6 +183,7 @@ class MainActivityNavigator(
         }
     }
 
+    @SuppressLint("Range")
     private fun getFileName(uri: Uri?): String? {
         uri ?: return null
         var result: String? = null

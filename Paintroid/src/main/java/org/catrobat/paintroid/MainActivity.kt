@@ -42,6 +42,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.widget.TooltipCompat
+import androidx.core.net.toUri
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -62,9 +63,7 @@ import org.catrobat.paintroid.command.implementation.DefaultCommandFactory
 import org.catrobat.paintroid.command.implementation.DefaultCommandManager
 import org.catrobat.paintroid.command.implementation.LayerOpacityCommand
 import org.catrobat.paintroid.command.serialization.CommandSerializer
-import org.catrobat.paintroid.common.CommonFactory
-import org.catrobat.paintroid.common.PAINTROID_PICTURE_NAME
-import org.catrobat.paintroid.common.PAINTROID_PICTURE_PATH
+import org.catrobat.paintroid.common.*
 import org.catrobat.paintroid.contract.LayerContracts
 import org.catrobat.paintroid.contract.MainActivityContracts
 import org.catrobat.paintroid.contract.MainActivityContracts.MainView
@@ -309,6 +308,8 @@ class MainActivity : AppCompatActivity(), MainView, CommandListener {
                     presenterMain.onNewImage()
                 }else if(receivedIntent.getStringExtra("LOAD_IMAGE") == "load_image"){
                     presenterMain.replaceImageClicked()
+                }else if(receivedIntent.getStringExtra("LOAD_PROJECT") == "load_project"){
+                    presenterMain.loadScaledImage((receivedIntent.getStringExtra("PROJECT_URI"))?.toUri(), REQUEST_CODE_LOAD_PICTURE)
                 }else{
                 val intent = intent
                 val picturePath = intent.getStringExtra(PAINTROID_PICTURE_PATH)
@@ -775,8 +776,4 @@ class MainActivity : AppCompatActivity(), MainView, CommandListener {
             }
         }
     }
-
-    fun getVersionCode(): String = runCatching {
-        packageManager.getPackageInfo(packageName, 0).versionName
-    }.getOrDefault("")
 }

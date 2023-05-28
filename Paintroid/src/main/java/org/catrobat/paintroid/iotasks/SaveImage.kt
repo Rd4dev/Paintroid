@@ -35,6 +35,7 @@ import org.catrobat.paintroid.model.Project
 import org.catrobat.paintroid.projectDB
 import java.io.IOException
 import java.lang.ref.WeakReference
+import java.text.SimpleDateFormat
 import java.util.*
 
 class SaveImage(
@@ -181,12 +182,21 @@ class SaveImage(
 //                getImageUri(callback, bitmap)
 //                Log.d("saveimage", "execute: getImageUri - ${getImageUri(callback, bitmap)}")
                 if(saveProject == true) {
+                    Log.d("projecturi", "execute: uri - $uri")
+                    Log.d("projecturi", "execute: currenturi - $currentUri")
+
+                    //date time format
+                    val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy")
+                    val outputFormat = SimpleDateFormat("dd/MM/yyyy")
+                    val date = inputFormat.parse(Calendar.getInstance().time.toString())
+                    val formattedDate = outputFormat.format(date)
+
                     projectDB.dao.insertProject(
                         Project(
                             filename,
-                            uri.toString(),
-                            Calendar.getInstance().time.toString(),
-                            Calendar.getInstance().time.toString(),
+                            currentUri.toString(),
+                            formattedDate,
+                            formattedDate,
                             "",
                             FileIO.fileType.toString(),
                             0,

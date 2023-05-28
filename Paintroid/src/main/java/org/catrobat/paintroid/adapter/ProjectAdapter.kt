@@ -10,6 +10,8 @@ import org.catrobat.paintroid.R
 import org.catrobat.paintroid.model.Project
 
 class ProjectAdapter(var projectList: ArrayList<Project>): RecyclerView.Adapter<ProjectAdapter.ItemViewHolder>() {
+    private var itemClickListener: OnItemClickListener? = null
+
     class ItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val itemImageView: ImageView = itemView.findViewById(R.id.iv_pocket_paint_project_thumbnail_image)
         val itemNameText: TextView = itemView.findViewById(R.id.tv_pocket_paint_project_name)
@@ -23,11 +25,32 @@ class ProjectAdapter(var projectList: ArrayList<Project>): RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = projectList[position]
-        holder.itemNameText.text = item.name
+        holder.itemNameText.text = item.name.substringBefore(".catrobat-image")
         holder.itemLastModifiedText.text = item.lastModified
+
+        /*holder.itemView.setOnClickListener {
+            val clickedItem = projectList[position]
+            val currentPosition = position
+            val projecturi = clickedItem.path
+        }*/
+
+        holder.itemView.setOnClickListener {
+            val clickedItem = projectList[position]
+            val currentPosition = position
+            val projecturi = clickedItem.path
+            itemClickListener?.onItemClick(currentPosition, projecturi)
+        }
     }
 
     override fun getItemCount(): Int {
         return projectList.size
+    }
+
+    interface OnItemClickListener{
+        fun onItemClick(position: Int, projectUri: String)
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener){
+        itemClickListener = listener
     }
 }
