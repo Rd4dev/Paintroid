@@ -24,10 +24,10 @@
 
             <ImageView
                 android:id="@+id/iv_pocket_paint_project_thumbnail_image"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="15dp"
+                android:layout_width="50dp"
+                android:layout_height="80dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
                 android:src="@drawable/pocketpaint_logo_small"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

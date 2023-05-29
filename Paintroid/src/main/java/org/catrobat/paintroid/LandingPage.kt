@@ -52,13 +52,12 @@ class LandingPage: AppCompatActivity() {
         //delete all projects
         //projectDB.dao.deleteAllProjects()
 
-        init()
+        //delete particular project
+        /*projectDB.dao.deleteProject(74)
+        projectDB.dao.deleteProject(69)
+        projectDB.dao.deleteProject(70)*/
 
-        val landingPageToMainActivityBtn = findViewById<Button>(R.id.btn_pocket_paint_landing_page_btn)
-        landingPageToMainActivityBtn.setOnClickListener {
-            val mainActivityIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainActivityIntent)
-        }
+        init()
 
         Log.d("databasedb", "onCreate: Database - ${projectDB.dao.getProjects()}")
         val landingPageBtnNewProject = findViewById<FloatingActionButton>(R.id.fab_pocket_paint_open_new_project)
@@ -84,7 +83,10 @@ class LandingPage: AppCompatActivity() {
         loadProjectIntent.putExtra("LOAD_PROJECT", "load_project")
         startActivity(loadProjectIntent)*/
 
+        val lastModifiedProject = projectDB.dao.getProjects()[projectDB.dao.getProjects().size-1]
         val previewImage = findViewById<ImageView>(R.id.iv_pocket_paint_image_preview)
+        previewImage.scaleType = ImageView.ScaleType.CENTER
+        previewImage.setImageURI(Uri.parse(lastModifiedProject.imagePreviewPath))
         previewImage.setOnClickListener {
             val mainActivityIntent = Intent(this, MainActivity::class.java)
             startActivity(mainActivityIntent)

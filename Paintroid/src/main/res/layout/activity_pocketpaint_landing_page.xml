@@ -9,6 +9,7 @@
         layout="@layout/pocketpaint_layout_landingpage_top_bar" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="656px"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,25 +44,11 @@
         android:layout_height="wrap_content"
         android:text="My Projects"
         android:textColor="@color/pocketpaint_color_picker_white"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        android:textSize="22sp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="14dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.438" />
-
-    <Button
-        android:id="@+id/btn_pocket_paint_landing_page_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go to Main Activity"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_pocket_paint_landing_page_text"
-        app:layout_constraintVertical_bias="0.034" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_pocket_paint_load_project"
@@ -88,10 +75,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_pocket_paint_projects_list"
         android:layout_width="match_parent"
-        android:layout_height="326dp"
+        android:layout_height="380dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_pocket_paint_landing_page_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_pocket_paint_landing_page_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

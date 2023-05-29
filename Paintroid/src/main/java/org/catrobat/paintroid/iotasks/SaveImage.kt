@@ -56,23 +56,33 @@ class SaveImage(
         private val TAG = SaveImage::class.java.simpleName
     }
 
+    var imagePreviewPath: Uri? = null
+
     private fun getImageUri(
         callback: SaveImageCallback,
         bitmap: Bitmap?
     ): Uri? {
-        Log.d("saveimage", "getImageUri: in getImageUri")
+        Log.d("imagepreview", "getImageUri: in getImageUri")
         val filename = FileIO.defaultFileName
         return if (uri == null) {
+            Log.d("imagepreview", "getImageUri: in uri == null")
 //            Log.d("saveimage", "getImageUri: if")
 //            Log.d("saveimage", "getImageUri: filename - $filename")
 //            Log.d("saveimage", "getImageUri: callback content resolver - ${callback.contentResolver}")
 //            Log.d("saveimage", "getImageUri: context - $context")
 //            Log.d("saveimage", "getImageUri: save - ${FileIO.saveBitmapToFile(filename, bitmap, callback.contentResolver, context)}")
-            val imageUri = FileIO.saveBitmapToFile(filename, bitmap, callback.contentResolver, context)
+            Log.d("imagepreview", "getImageUri: filename - $filename")
+            Log.d("imagepreview", "getImageUri: bitmap - $bitmap")
+            Log.d("imagepreview", "getImageUri: callback - $callback")
+            Log.d("imagepreview", "getImageUri: callback contentResolver - ${callback.contentResolver}")
+            Log.d("imagepreview", "getImageUri: context - $context")
+            val imageUri = FileIO.saveBitmapToFile(filename.replace(".catrobat-image", ".png"), bitmap, callback.contentResolver, context)
+            Log.d("imagepreview", "getImageUri: in uri - $imageUri")
 //            Log.d("saveimage", "getImageUri: if imageUri - $imageUri")
             imageUri
         } else {
 //            Log.d("saveimage", "getImageUri: else")
+            Log.d("imagepreview", "getImageUri: in else")
             uri?.let { FileIO.saveBitmapToUri(it, bitmap, context) }
         }
     }
@@ -142,6 +152,9 @@ class SaveImage(
                         } else {
                             /*projectDB.dao.insertProject(Project("saveImageTest", uri.toString(), Calendar.getInstance().time.toString(), Calendar.getInstance().time.toString(), "", FileIO.fileType.toString(), 0, getImageUri(callback, bitmap).toString()))
                             Log.d("saveimage", "execute: projects in DB - $dbp")*/
+                            Log.d("imagepreview", "execute: here after imagepreviewpath- $imagePreviewPath")
+                            imagePreviewPath = getImageUri(callback, bitmap)
+                            Log.d("imagepreview", "execute: here after imagepreviewpath- $imagePreviewPath")
                             commandSerializer.writeToFile(filename)
                         }
                     }
@@ -182,8 +195,9 @@ class SaveImage(
 //                getImageUri(callback, bitmap)
 //                Log.d("saveimage", "execute: getImageUri - ${getImageUri(callback, bitmap)}")
                 if(saveProject == true) {
-                    Log.d("projecturi", "execute: uri - $uri")
+//                    Log.d("projecturi", "execute: uri - $uri")
                     Log.d("projecturi", "execute: currenturi - $currentUri")
+                    Log.d("projecturi", "execute: image path - $imagePreviewPath")
 
                     //date time format
                     val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy")
@@ -200,7 +214,7 @@ class SaveImage(
                             "",
                             FileIO.fileType.toString(),
                             0,
-                            "paintroid/imagePreviewTestPath"
+                            imagePreviewPath.toString()
                         )
                     )
                     Log.d("saveimage", "execute: here!")

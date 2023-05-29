@@ -1,5 +1,6 @@
 package org.catrobat.paintroid.adapter
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +26,7 @@ class ProjectAdapter(var projectList: ArrayList<Project>): RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = projectList[position]
+        holder.itemImageView.setImageURI(Uri.parse(item.imagePreviewPath))
         holder.itemNameText.text = item.name.substringBefore(".catrobat-image")
         holder.itemLastModifiedText.text = item.lastModified
 
