@@ -1,14 +1,21 @@
 package org.catrobat.paintroid.adapter
 
+import android.app.AlertDialog
+import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import org.catrobat.paintroid.R
 import org.catrobat.paintroid.model.Project
+import org.catrobat.paintroid.projectDB
 
 class ProjectAdapter(var projectList: ArrayList<Project>): RecyclerView.Adapter<ProjectAdapter.ItemViewHolder>() {
     private var itemClickListener: OnItemClickListener? = null
@@ -17,6 +24,7 @@ class ProjectAdapter(var projectList: ArrayList<Project>): RecyclerView.Adapter<
         val itemImageView: ImageView = itemView.findViewById(R.id.iv_pocket_paint_project_thumbnail_image)
         val itemNameText: TextView = itemView.findViewById(R.id.tv_pocket_paint_project_name)
         val itemLastModifiedText: TextView = itemView.findViewById(R.id.tv_pocket_paint_project_lastmodified)
+        val itemMoreOption : ImageView = itemView.findViewById(R.id.iv_pocket_paint_project_more)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -24,24 +32,65 @@ class ProjectAdapter(var projectList: ArrayList<Project>): RecyclerView.Adapter<
         return ItemViewHolder(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = projectList[position]
         holder.itemImageView.setImageURI(Uri.parse(item.imagePreviewPath))
         holder.itemNameText.text = item.name.substringBefore(".catrobat-image")
         holder.itemLastModifiedText.text = item.lastModified
-
-        /*holder.itemView.setOnClickListener {
-            val clickedItem = projectList[position]
-            val currentPosition = position
-            val projecturi = clickedItem.path
-        }*/
+        val projectDetailsMenu = holder.itemMoreOption
+        projectDetailsMenu.setOnClickListener { view ->
+            val popupMenu = PopupMenu(view.context, view)
+            popupMenu.inflate(R.menu.menu_pocketpaint_project_details)
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                when(menuItem.itemId){
+                    R.id.project_details -> {
+                        showDetailsDialog(view.context, position)
+                        true
+                    }
+                    R.id.project_delete -> {
+                        showDeleteDialog(view.context, position)
+                        projectList.removeAt(position)
+                        notifyDataSetChanged()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popupMenu.show()
+        }
 
         holder.itemView.setOnClickListener {
             val clickedItem = projectList[position]
-            val currentPosition = position
-            val projecturi = clickedItem.path
-            itemClickListener?.onItemClick(currentPosition, projecturi)
+            val projectUri = clickedItem.path
+            itemClickListener?.onItemClick(position, projectUri)
         }
+    }
+
+    private fun showDetailsDialog(context: Context, position: Int) {
+        AlertDialog.Builder(context, R.style.PocketPaintAlertDialog)
+            .setTitle(projectList[position].name.removeSuffix(".catrobat-image"))
+            .setMessage("Resolution: " + projectList[position].resolution + "\n" +
+                "Last modified: " + projectList[position].lastModified + "\n" +
+                "Creation date: " + projectList[position].creationDate + "\n" +
+                "Format: " + projectList[position].format + "\n" +
+                "Size: " + projectList[position].size + "\n")
+            .setPositiveButton(R.string.pocketpaint_ok) { _, _ -> null }
+            .create()
+            .show()
+    }
+
+    private fun showDeleteDialog(context: Context, position: Int) {
+        AlertDialog.Builder(context, R.style.PocketPaintAlertDialog)
+            .setTitle("Delete " + projectList[position].name.removeSuffix(".catrobat-image"))
+            .setMessage("Do you really want to delete your Project?")
+            .setPositiveButton("Delete"){ _, _ ->
+                Toast.makeText(context, "Deleting", Toast.LENGTH_SHORT).show()
+                projectDB.dao.deleteProject(projectList[position].id)
+            }
+            .setNegativeButton(R.string.cancel_button_text){ _, _ -> null}
+            .create()
+            .show()
     }
 
     override fun getItemCount(): Int {
