@@ -83,7 +83,7 @@ class LandingPage: AppCompatActivity() {
         loadProjectIntent.putExtra("LOAD_PROJECT", "load_project")
         startActivity(loadProjectIntent)*/
 
-        val lastModifiedProject = projectDB.dao.getProjects()[projectDB.dao.getProjects().size-1]
+        val lastModifiedProject = projectDB.dao.getProjects()[0]
         val previewImage = findViewById<ImageView>(R.id.iv_pocket_paint_image_preview)
         previewImage.scaleType = ImageView.ScaleType.CENTER
         previewImage.setImageURI(Uri.parse(lastModifiedProject.imagePreviewPath))

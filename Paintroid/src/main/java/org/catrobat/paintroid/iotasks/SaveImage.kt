@@ -200,17 +200,18 @@ class SaveImage(
                     Log.d("projecturi", "execute: image path - $imagePreviewPath")
 
                     //date time format
-                    val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy")
-                    val outputFormat = SimpleDateFormat("dd/MM/yyyy")
-                    val date = inputFormat.parse(Calendar.getInstance().time.toString())
-                    val formattedDate = outputFormat.format(date)
+//                    val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy")
+//                    val outputFormat = SimpleDateFormat("dd/MM/yyyy")
+//                    val date = inputFormat.parse(Calendar.getInstance().time.toString())
+                    val date = Calendar.getInstance().time.toString()
+//                    val formattedDate = outputFormat.format(date)
 
                     projectDB.dao.insertProject(
                         Project(
                             filename,
                             currentUri.toString(),
-                            formattedDate,
-                            formattedDate,
+                            date,
+                            date,
                             "",
                             FileIO.fileType.toString(),
                             0,

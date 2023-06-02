@@ -86,9 +86,9 @@ class ProjectAdapter(var projectList: ArrayList<Project>): RecyclerView.Adapter<
             .setMessage("Do you really want to delete your Project?")
             .setPositiveButton("Delete"){ _, _ ->
                 Toast.makeText(context, "Deleting", Toast.LENGTH_SHORT).show()
-                projectDB.dao.deleteProject(projectList[position].id)
+                projectDB.dao.deleteProject(projectList[position-1].id)
             }
-            .setNegativeButton(R.string.cancel_button_text){ _, _ -> null}
+            .setNegativeButton(R.string.cancel_button_text){ _, _ -> }
             .create()
             .show()
     }
