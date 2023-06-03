@@ -256,7 +256,7 @@ interface MainActivityContracts {
 
         fun saveImageConfirmClicked(requestCode: Int, uri: Uri?)
 
-        fun saveProjectConfirmClicked(requestCode: Int, uri: Uri?)
+        fun saveProjectConfirmClicked(requestCode: Int, uri: Uri?, imagePreviewUri: Uri?)
 
         fun saveCopyConfirmClicked(requestCode: Int, uri: Uri?)
 
@@ -354,6 +354,7 @@ interface MainActivityContracts {
             layerModel: LayerContracts.Model,
             commandSerializer: CommandSerializer,
             uri: Uri?,
+            imagePreviewUri: Uri?,
             context: Context
         )
 

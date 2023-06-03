@@ -64,7 +64,8 @@ class ProjectAdapter(var projectList: ArrayList<Project>): RecyclerView.Adapter<
             val clickedItem = projectList[position]
             val projectUri = clickedItem.path
             val projectName = clickedItem.name
-            itemClickListener?.onItemClick(position, projectUri, projectName)
+            val projectImagePreviewUri = clickedItem.imagePreviewPath
+            itemClickListener?.onItemClick(position, projectUri, projectName, projectImagePreviewUri)
         }
     }
 
@@ -99,7 +100,7 @@ class ProjectAdapter(var projectList: ArrayList<Project>): RecyclerView.Adapter<
     }
 
     interface OnItemClickListener{
-        fun onItemClick(position: Int, projectUri: String, projectName: String)
+        fun onItemClick(position: Int, projectUri: String, projectName: String, projectImagePreviewUri: String)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener){

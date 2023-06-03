@@ -335,7 +335,6 @@ open class MainActivityPresenter(
     }
 
     override fun switchBetweenVersions(@PermissionRequestCode requestCode: Int, isExport: Boolean) {
-        Log.d("switching", "switchBetweenVersions: In switch between versions")
         this.isExport = isExport
 
         if (model.isOpenedFromCatroid) {
@@ -343,7 +342,6 @@ open class MainActivityPresenter(
         }
 
         if (navigator.isSdkAboveOrEqualM) {
-            Log.d("switching", "switchBetweenVersions: In switch between versions if 1st statement")
             askForReadAndWriteExternalStoragePermission(requestCode)
             when (requestCode) {
                 PERMISSION_REQUEST_CODE_REPLACE_PICTURE,
@@ -353,29 +351,22 @@ open class MainActivityPresenter(
                 PERMISSION_EXTERNAL_STORAGE_SAVE_CONFIRMED_FINISH,
                 PERMISSION_EXTERNAL_STORAGE_SAVE_COPY,
                 PERMISSION_EXTERNAL_STORAGE_SAVE -> {
-                    Log.d("switching", "switchBetweenVersions: In switch between versions Permission external storage save")
                     checkForDefaultFilename()
                 }
                 PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT -> {
-                    Log.d("switching", "switchBetweenVersions: In switch between versions Permission external storage save project")
                     checkForDefaultFilename()
                 }
             }
         } else {
-            Log.d("switching", "switchBetweenVersions: In switch between versions else 1st statement")
             if (requestCode == PERMISSION_REQUEST_CODE_REPLACE_PICTURE) {
-                Log.d("switching", "switchBetweenVersions: In switch between versions if 2nd statement")
                 if (isImageUnchanged || model.isSaved) {
-                    Log.d("switching", "switchBetweenVersions: In switch between versions if 3rd statement")
                     navigator.startLoadImageActivity(REQUEST_CODE_LOAD_PICTURE)
                     setFirstCheckBoxInLayerMenu()
                 } else {
-                    Log.d("switching", "switchBetweenVersions: In switch between versions else 3rd statement")
                     navigator.showSaveBeforeLoadImageDialog()
                     setFirstCheckBoxInLayerMenu()
                 }
             } else {
-                Log.d("switching", "switchBetweenVersions: In switch between versions else 2nd statement")
                 askForReadAndWriteExternalStoragePermission(requestCode)
             }
         }
@@ -511,7 +502,8 @@ open class MainActivityPresenter(
                     PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT -> {
                         saveProjectConfirmClicked(
                             SAVE_PROJECT_DEFAULT,
-                            FileIO.storeImageUri
+                            FileIO.storeImageUri,
+                            FileIO.storeImagePreviewUri,
                         )
                         Log.d("storeimageuri", "handleRequestPermissionsResult: FileIO - ${FileIO.storeImageUri}")
                     }
@@ -573,10 +565,10 @@ open class MainActivityPresenter(
         interactor.saveImage(this, requestCode, workspace.layerModel, commandSerializer, uri, context)
     }
 
-    override fun saveProjectConfirmClicked(requestCode: Int, uri: Uri?) {
+    override fun saveProjectConfirmClicked(requestCode: Int, uri: Uri?, imagePreviewUri: Uri?) {
         checkIfClippingToolNeedsAdjustment()
         view.refreshDrawingSurface()
-        interactor.saveProject(this, requestCode, workspace.layerModel, commandSerializer, uri, context)
+        interactor.saveProject(this, requestCode, workspace.layerModel, commandSerializer, uri, imagePreviewUri, context)
     }
 
     override fun saveCopyConfirmClicked(requestCode: Int, uri: Uri?) {
