@@ -195,15 +195,21 @@ open class CommandSerializer(private val activityContext: Context, private val c
     }
 
     fun overWriteFile(fileName: String, uri: Uri, resolver: ContentResolver): Uri? {
+        Log.d("switching", "overWriteFile: Filename in over write file - $fileName")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val projection = arrayOf(MediaStore.Images.Media._ID)
             val c = resolver.query(uri, projection, null, null, null)
+            Log.d("storeimageuri", "currentUri: Uri in overWriteFile- $uri")
             if (c != null) {
+                Log.d("switching", "overWriteFile: c - $c")
                 if (c.moveToFirst()) {
                     val id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID))
                     val deleteUri = ContentUris.withAppendedId(MediaStore.Downloads.EXTERNAL_CONTENT_URI, id)
                     resolver.delete(deleteUri, null, null)
                 } else {
+                    val id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID))
+                    val deleteUri = ContentUris.withAppendedId(MediaStore.Downloads.EXTERNAL_CONTENT_URI, id)
+                    Log.d("switching", "overWriteFile: No delete uri found - $deleteUri")
                     throw AssertionError("No file to delete was found!")
                 }
                 c.close()

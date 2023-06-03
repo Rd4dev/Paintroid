@@ -38,6 +38,7 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.webkit.MimeTypeMap
+import android.widget.Toast
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -159,6 +160,9 @@ class MainActivity : AppCompatActivity(), MainView, CommandListener {
     @Volatile
     private var userInteraction = false
     private var isTemporaryFileSavingTest = false
+
+    var projectName: String? = null
+    var projectUri: String? = null
 
     private val isRunningEspressoTests: Boolean by lazy {
         try {
@@ -309,6 +313,8 @@ class MainActivity : AppCompatActivity(), MainView, CommandListener {
                 }else if(receivedIntent.getStringExtra("LOAD_IMAGE") == "load_image"){
                     presenterMain.replaceImageClicked()
                 }else if(receivedIntent.getStringExtra("LOAD_PROJECT") == "load_project"){
+                    projectName = receivedIntent.getStringExtra("PROJECT_NAME")
+                    projectUri = receivedIntent.getStringExtra("PROJECT_URI")
                     presenterMain.loadScaledImage((receivedIntent.getStringExtra("PROJECT_URI"))?.toUri(), REQUEST_CODE_LOAD_PICTURE)
                 }else{
                 val intent = intent
@@ -403,7 +409,15 @@ class MainActivity : AppCompatActivity(), MainView, CommandListener {
                     UserPreferences(getPreferences(MODE_PRIVATE))
                 )
             R.id.pocketpaint_advanced_settings -> presenterMain.showAdvancedSettingsClicked()
-            android.R.id.home -> presenterMain.backToPocketCodeClicked()
+            android.R.id.home -> {
+                if(FileIO.checkFileExists(FileIO.FileType.CATROBAT, projectName!!, this.contentResolver)){
+                    Log.d("backpressed", "onBackPressed: in back pressed project exists")
+                    Toast.makeText(this, "Project Name: $projectName", Toast.LENGTH_SHORT).show()
+                    FileIO.storeImageUri = Uri.parse(projectUri)
+                    presenterMain.switchBetweenVersions(PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT, true)
+                }
+                presenterMain.backToPocketCodeClicked()
+            }
             else -> return false
         }
         return true
@@ -631,7 +645,7 @@ class MainActivity : AppCompatActivity(), MainView, CommandListener {
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(!isOpenedFromCatroid)
-            setDisplayHomeAsUpEnabled(isOpenedFromCatroid)
+            setDisplayHomeAsUpEnabled(true)
             setHomeButtonEnabled(true)
             setDisplayShowHomeEnabled(false)
         }
@@ -674,6 +688,8 @@ class MainActivity : AppCompatActivity(), MainView, CommandListener {
     }
 
     override fun onBackPressed() {
+        Log.d("backpressed", "onBackPressed: in back pressed")
+        Toast.makeText(this, "Project Name: $projectName", Toast.LENGTH_SHORT).show()
         if (supportFragmentManager.isStateSaved) {
             super.onBackPressed()
         } else if (!supportFragmentManager.popBackStackImmediate()) {

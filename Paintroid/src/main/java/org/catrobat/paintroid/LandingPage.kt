@@ -98,7 +98,6 @@ class LandingPage: AppCompatActivity() {
         return true
     }
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.pocketpaint_options_rate_us -> openPlayStore(applicationContext.packageName)
@@ -160,11 +159,12 @@ class LandingPage: AppCompatActivity() {
         projectsRecyclerView.adapter = projectAdapter
 
         projectAdapter.setOnItemClickListener(object: ProjectAdapter.OnItemClickListener{
-            override fun onItemClick(position: Int, projectUri: String) {
+            override fun onItemClick(position: Int, projectUri: String, projectName: String) {
                 Log.d("clicklistener", "onItemClick: here with position - $position, project uri - $projectUri")
                 val loadProjectIntent = Intent(applicationContext, MainActivity::class.java)
                 loadProjectIntent.putExtra("LOAD_PROJECT", "load_project")
                 loadProjectIntent.putExtra("PROJECT_URI", projectUri)
+                loadProjectIntent.putExtra("PROJECT_NAME", projectName)
                 startActivity(loadProjectIntent)
             }
         })

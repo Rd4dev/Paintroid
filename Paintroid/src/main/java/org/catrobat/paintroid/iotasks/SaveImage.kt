@@ -62,6 +62,7 @@ class SaveImage(
         callback: SaveImageCallback,
         bitmap: Bitmap?
     ): Uri? {
+        Log.d("getimageuricall", "getImageUri: called")
         Log.d("imagepreview", "getImageUri: in getImageUri")
         val filename = FileIO.defaultFileName
         return if (uri == null) {
@@ -79,11 +80,17 @@ class SaveImage(
             val imageUri = FileIO.saveBitmapToFile(filename.replace(".catrobat-image", ".png"), bitmap, callback.contentResolver, context)
             Log.d("imagepreview", "getImageUri: in uri - $imageUri")
 //            Log.d("saveimage", "getImageUri: if imageUri - $imageUri")
+            Log.d("getimageuricall", "getImageUri: imageuri - $imageUri")
             imageUri
         } else {
 //            Log.d("saveimage", "getImageUri: else")
             Log.d("imagepreview", "getImageUri: in else")
-            uri?.let { FileIO.saveBitmapToUri(it, bitmap, context) }
+            uri?.let {
+                Log.d("imagepreview", "getImageUri: Saving bitmap to uri - $uri")
+                Log.d("getimageuricall", "getImageUri: uri - $uri")
+//                FileIO.saveBitmapToUri(it, bitmap, context)
+                FileIO.saveBitmapToFile(filename.replace(".catrobat-image", ".png"), bitmap, callback.contentResolver, context)
+            }
         }
     }
 
@@ -145,16 +152,45 @@ class SaveImage(
 
                 currentUri =
                     if(saveProject == true){
-                        if (uri != null) {
+                        FileIO.fileType = FileIO.FileType.CATROBAT
+                        currentUri = if (uri != null) {
                             uri?.let {
+                                Log.d("storeimageuri", "currentUri: Uri - $uri")
                                 commandSerializer.overWriteFile(filename, it, callback.contentResolver)
                             }
                         } else {
                             /*projectDB.dao.insertProject(Project("saveImageTest", uri.toString(), Calendar.getInstance().time.toString(), Calendar.getInstance().time.toString(), "", FileIO.fileType.toString(), 0, getImageUri(callback, bitmap).toString()))
                             Log.d("saveimage", "execute: projects in DB - $dbp")*/
+                            commandSerializer.writeToFile(filename)
+                        }
+                        imagePreviewPath = getImageUri(callback, bitmap)
+                        val date = Calendar.getInstance().time.toString()
+                        Log.d("storeimageuri", "handleRequestPermissionsResult: Image Preview Path - ${imagePreviewPath}")
+                        if (uri != null) {
+                            uri?.let {
+                                Log.d("storeimageuri", "handleRequestPermissionsResult: FileIO in if - ${FileIO.storeImageUri}")
+                                projectDB.dao.updateProjectUri(filename, imagePreviewPath.toString(), currentUri.toString())
+                                commandSerializer.overWriteFile(filename, it, callback.contentResolver)
+                            }
+                        } else {
+                            /*projectDB.dao.insertProject(Project("saveImageTest", uri.toString(), Calendar.getInstance().time.toString(), Calendar.getInstance().time.toString(), "", FileIO.fileType.toString(), 0, getImageUri(callback, bitmap).toString()))
+                            Log.d("saveimage", "execute: projects in DB - $dbp")*/
+                            Log.d("storeimageuri", "handleRequestPermissionsResult: FileIO in else - ${FileIO.storeImageUri}")
                             Log.d("imagepreview", "execute: here after imagepreviewpath- $imagePreviewPath")
-                            imagePreviewPath = getImageUri(callback, bitmap)
                             Log.d("imagepreview", "execute: here after imagepreviewpath- $imagePreviewPath")
+
+                            projectDB.dao.insertProject(
+                                Project(
+                                    filename,
+                                    currentUri.toString(),
+                                    date,
+                                    date,
+                                    "",
+                                    FileIO.fileType.toString(),
+                                    0,
+                                    imagePreviewPath.toString()
+                                )
+                            )
                             commandSerializer.writeToFile(filename)
                         }
                     }
@@ -194,7 +230,9 @@ class SaveImage(
 //                Log.d("saveimage", "execute: callback - $callback")
 //                getImageUri(callback, bitmap)
 //                Log.d("saveimage", "execute: getImageUri - ${getImageUri(callback, bitmap)}")
-                if(saveProject == true) {
+
+
+                /*if(saveProject == true) {
 //                    Log.d("projecturi", "execute: uri - $uri")
                     Log.d("projecturi", "execute: currenturi - $currentUri")
                     Log.d("projecturi", "execute: image path - $imagePreviewPath")
@@ -206,20 +244,34 @@ class SaveImage(
                     val date = Calendar.getInstance().time.toString()
 //                    val formattedDate = outputFormat.format(date)
 
-                    projectDB.dao.insertProject(
-                        Project(
+                    if (FileIO.checkFileExists(
+                            FileIO.FileType.CATROBAT,
                             filename,
-                            currentUri.toString(),
-                            date,
-                            date,
-                            "",
-                            FileIO.fileType.toString(),
-                            0,
-                            imagePreviewPath.toString()
+                            context.contentResolver
                         )
-                    )
-                    Log.d("saveimage", "execute: here!")
-                }
+                    ) {
+                        Log.d("storeimageuri", "In update project - Filename: $filename")
+                        Log.d("storeimageuri", "In update project - Filename: ${FileIO.checkFileExists(FileIO.FileType.CATROBAT, filename, context.contentResolver)}")
+                        projectDB.dao.updateProjectUri(filename, imagePreviewPath.toString(), currentUri.toString())
+                    } else {
+                        Log.d("storeimageuri", "In insert project")
+                        projectDB.dao.insertProject(
+                            Project(
+                                filename,
+                                currentUri.toString(),
+                                date,
+                                date,
+                                "",
+                                FileIO.fileType.toString(),
+                                0,
+                                imagePreviewPath.toString()
+                            )
+                        )
+                        Log.d("saveimage", "execute: here!")
+                    }
+                }*/
+
+
                 idlingResource.decrement()
             } catch (e: Exception) {
                 idlingResource.decrement()

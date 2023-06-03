@@ -335,6 +335,7 @@ open class MainActivityPresenter(
     }
 
     override fun switchBetweenVersions(@PermissionRequestCode requestCode: Int, isExport: Boolean) {
+        Log.d("switching", "switchBetweenVersions: In switch between versions")
         this.isExport = isExport
 
         if (model.isOpenedFromCatroid) {
@@ -342,6 +343,7 @@ open class MainActivityPresenter(
         }
 
         if (navigator.isSdkAboveOrEqualM) {
+            Log.d("switching", "switchBetweenVersions: In switch between versions if 1st statement")
             askForReadAndWriteExternalStoragePermission(requestCode)
             when (requestCode) {
                 PERMISSION_REQUEST_CODE_REPLACE_PICTURE,
@@ -350,19 +352,30 @@ open class MainActivityPresenter(
                 PERMISSION_EXTERNAL_STORAGE_SAVE_CONFIRMED_NEW_EMPTY,
                 PERMISSION_EXTERNAL_STORAGE_SAVE_CONFIRMED_FINISH,
                 PERMISSION_EXTERNAL_STORAGE_SAVE_COPY,
-                PERMISSION_EXTERNAL_STORAGE_SAVE -> checkForDefaultFilename()
-                PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT -> checkForDefaultFilename()
+                PERMISSION_EXTERNAL_STORAGE_SAVE -> {
+                    Log.d("switching", "switchBetweenVersions: In switch between versions Permission external storage save")
+                    checkForDefaultFilename()
+                }
+                PERMISSION_EXTERNAL_STORAGE_SAVE_PROJECT -> {
+                    Log.d("switching", "switchBetweenVersions: In switch between versions Permission external storage save project")
+                    checkForDefaultFilename()
+                }
             }
         } else {
+            Log.d("switching", "switchBetweenVersions: In switch between versions else 1st statement")
             if (requestCode == PERMISSION_REQUEST_CODE_REPLACE_PICTURE) {
+                Log.d("switching", "switchBetweenVersions: In switch between versions if 2nd statement")
                 if (isImageUnchanged || model.isSaved) {
+                    Log.d("switching", "switchBetweenVersions: In switch between versions if 3rd statement")
                     navigator.startLoadImageActivity(REQUEST_CODE_LOAD_PICTURE)
                     setFirstCheckBoxInLayerMenu()
                 } else {
+                    Log.d("switching", "switchBetweenVersions: In switch between versions else 3rd statement")
                     navigator.showSaveBeforeLoadImageDialog()
                     setFirstCheckBoxInLayerMenu()
                 }
             } else {
+                Log.d("switching", "switchBetweenVersions: In switch between versions else 2nd statement")
                 askForReadAndWriteExternalStoragePermission(requestCode)
             }
         }
@@ -500,6 +513,7 @@ open class MainActivityPresenter(
                             SAVE_PROJECT_DEFAULT,
                             FileIO.storeImageUri
                         )
+                        Log.d("storeimageuri", "handleRequestPermissionsResult: FileIO - ${FileIO.storeImageUri}")
                     }
                     PERMISSION_EXTERNAL_STORAGE_SAVE_COPY -> {
                         saveCopyConfirmClicked(
