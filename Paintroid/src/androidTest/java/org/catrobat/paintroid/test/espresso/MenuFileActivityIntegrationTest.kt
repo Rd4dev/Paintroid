@@ -29,6 +29,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
@@ -54,6 +57,8 @@ import androidx.test.rule.GrantPermissionRule
 import org.catrobat.paintroid.FileIO
 import org.catrobat.paintroid.MainActivity
 import org.catrobat.paintroid.R
+import org.catrobat.paintroid.data.local.dao.ProjectDao
+import org.catrobat.paintroid.data.local.database.ProjectDatabase
 import org.catrobat.paintroid.presenter.MainActivityPresenter
 import org.catrobat.paintroid.test.espresso.util.BitmapLocationProvider
 import org.catrobat.paintroid.test.espresso.util.DrawingSurfaceLocationProvider.HALFWAY_BOTTOM_MIDDLE
@@ -260,6 +265,65 @@ class MenuFileActivityIntegrationTest {
             )
         }
         addUriToDeletionFileList(activity.model.savedPictureUri)
+    }
+
+    @Test
+    fun testSaveProject() {
+        val name = "testSaveProject"
+        onDrawingSurfaceView().perform(touchAt(MIDDLE))
+        onTopBarView().performOpenMoreOptions()
+        onView(withText(R.string.menu_save_project)).perform(click())
+        onView(withId(R.id.pocketpaint_image_name_save_text))
+            .perform(replaceText(name))
+        onView(withText(R.string.save_button_text)).perform(click())
+        onView(isRoot()).perform(waitFor(100))
+        assertNotNull(activity.model.savedPictureUri)
+        if (!activity.model.isOpenedFromCatroid) {
+            assertNotSame(
+                "null",
+                MainActivityPresenter.getPathFromUri(activity, activity.model.savedPictureUri!!)
+            )
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            addFileToDeletionFileList(name, "catrobat-image")
+            addFileToDeletionFileList(name, "png")
+        } else {
+            addUriToDeletionFileList(activity.model.savedPictureUri)
+        }
+    }
+
+    @Test
+    fun testSaveProjectOnBackPressed() {
+        val name = "testSaveProjectOnBackPress"
+        onDrawingSurfaceView().perform(touchAt(MIDDLE))
+        onTopBarView().performOpenMoreOptions()
+        onView(withText(R.string.menu_save_project)).perform(click())
+        onView(withId(R.id.pocketpaint_image_name_save_text))
+            .perform(replaceText(name))
+        onView(withText(R.string.save_button_text)).perform(click())
+        onView(isRoot()).perform(waitFor(100))
+        assertNotNull(activity.model.savedPictureUri)
+        if (!activity.model.isOpenedFromCatroid) {
+            assertNotSame(
+                "null",
+                MainActivityPresenter.getPathFromUri(activity, activity.model.savedPictureUri!!)
+            )
+        }
+        onDrawingSurfaceView().perform(touchAt(HALFWAY_RIGHT_MIDDLE))
+        onTopBarView().onHomeClicked()
+
+        val uri = activity.model.savedPictureUri
+        val oldFileName = uri?.path?.let { File(it).name }
+        val newFileName = activity.model.savedPictureUri?.path?.let { File(it).name }
+
+        assertEquals(oldFileName, newFileName)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            addFileToDeletionFileList(name, "catrobat-image")
+            addFileToDeletionFileList(name, "png")
+        } else {
+            addUriToDeletionFileList(activity.model.savedPictureUri)
+        }
     }
 
     @Test
@@ -658,8 +722,15 @@ class MenuFileActivityIntegrationTest {
     }
 
     private fun addFileToDeletionFileList(fileName: String?, extension: String?) {
-        val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val file = File(dir, "$fileName.$extension")
-        deletionFileList.add(file)
+        val dir: File? = when (extension) {
+            "catrobat-image", "ora" -> Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            "png", "jpg" -> Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            else -> null
+        }
+
+        if (dir != null) {
+            val file = File(dir, "$fileName.$extension")
+            deletionFileList.add(file)
+        }
     }
 }
