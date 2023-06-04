@@ -156,10 +156,10 @@ class SaveImage(
                     }
                     imagePreviewPath = getImagePreviewUri(callback, bitmap)
                     Log.d("homeclicked", "File imagePreviewPath in saveImage: $imagePreviewPath")
-                    val date = Calendar.getInstance().time.toString()
+                    val date = Calendar.getInstance().timeInMillis
                     if (uri != null) {
                         uri?.let {
-                            projectDB.dao.updateProjectUri(filename, imagePreviewPath.toString(), currentUri.toString())
+                            projectDB.dao.updateProjectUri(filename, imagePreviewPath.toString(), currentUri.toString(), date)
 //                            commandSerializer.overWriteFile(filename, it, callback.contentResolver)
                         }
                     } else {

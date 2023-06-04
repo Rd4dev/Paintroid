@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 data class Project(
     var name: String,
     val path: String,
-    var lastModified: String,
-    val creationDate: String,
+    var lastModified: Long,
+    val creationDate: Long,
     val resolution: String,
     val format: String,
     val size: Int,

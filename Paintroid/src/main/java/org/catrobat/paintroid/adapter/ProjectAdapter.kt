@@ -16,6 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 import org.catrobat.paintroid.R
 import org.catrobat.paintroid.model.Project
 import org.catrobat.paintroid.projectDB
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ProjectAdapter(var projectList: ArrayList<Project>): RecyclerView.Adapter<ProjectAdapter.ItemViewHolder>() {
     private var itemClickListener: OnItemClickListener? = null
@@ -37,8 +40,12 @@ class ProjectAdapter(var projectList: ArrayList<Project>): RecyclerView.Adapter<
         val item = projectList[position]
         holder.itemImageView.setImageURI(Uri.parse(item.imagePreviewPath))
         holder.itemNameText.text = item.name.substringBefore(".catrobat-image")
-        holder.itemLastModifiedText.text = item.lastModified
+        val dateTimeInMillis = item.lastModified
+        val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault())
+        val formattedDateTime = dateTimeFormat.format(Date(dateTimeInMillis))
+        holder.itemLastModifiedText.text = formattedDateTime
         val projectDetailsMenu = holder.itemMoreOption
+
         projectDetailsMenu.setOnClickListener { view ->
             val popupMenu = PopupMenu(view.context, view)
             popupMenu.inflate(R.menu.menu_pocketpaint_project_details)
